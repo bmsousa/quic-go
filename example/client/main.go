@@ -31,6 +31,7 @@ func main() {
 	roundTripper := &http3.RoundTripper{
 		TLSClientConfig: &tls.Config{
 			RootCAs: testdata.GetRootCA(),
+			InsecureSkipVerify: true,
 		},
 	}
 	defer roundTripper.Close()

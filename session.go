@@ -432,6 +432,7 @@ runLoop:
 	s.closed.Set(true)
 	s.logger.Infof("Connection %s closed.", s.srcConnID)
 	s.cryptoStreamHandler.Close()
+	s.logger.Infof("CLOSING SESSION TIME END %f", time.Now().UnixNano())
 	return closeErr.err
 }
 
@@ -574,6 +575,7 @@ func (s *session) handleSinglePacket(p *receivedPacket, hdr *wire.Header) bool /
 
 	if s.logger.Debug() {
 		s.logger.Debugf("<- Reading packet %#x (%d bytes) for connection %s, %s", packet.packetNumber, len(p.data), hdr.DestConnectionID, packet.encryptionLevel)
+		s.logger.Debugf("SESSION RCV PKT TIME %f", time.Now().UnixNano())
 		packet.hdr.Log(s.logger)
 	}
 
@@ -610,6 +612,8 @@ func (s *session) handleRetryPacket(p *receivedPacket, hdr *wire.Header) bool /*
 	}
 	s.logger.Debugf("<- Received Retry")
 	s.logger.Debugf("Switching destination connection ID to: %s", hdr.SrcConnectionID)
+	s.logger.Debugf(" RCV RETRY PKT TIME INI -> %f \n", time.Now().UnixNano())
+
 	s.origDestConnID = s.destConnID
 	s.destConnID = hdr.SrcConnectionID
 	s.receivedRetry = true
@@ -841,6 +845,7 @@ func (s *session) closeLocal(e error) {
 	s.closeOnce.Do(func() {
 		if e == nil {
 			s.logger.Infof("Closing session.")
+			s.logger.Infof("CLOSING SESSION TIME INI %f", time.Now().UnixNano())
 		} else {
 			s.logger.Errorf("Closing session with error: %s", e)
 		}
@@ -1149,7 +1154,9 @@ func (s *session) logPacket(packet *packedPacket) {
 		// We don't need to allocate the slices for calling the format functions
 		return
 	}
+
 	s.logger.Debugf("-> Sending packet 0x%x (%d bytes) for connection %s, %s", packet.header.PacketNumber, len(packet.raw), s.srcConnID, packet.EncryptionLevel())
+  s.logger.Debugf(" SEND PKT TIME INI -> %f \n", time.Now().UnixNano())
 	packet.header.Log(s.logger)
 	for _, frame := range packet.frames {
 		wire.LogFrame(s.logger, frame, true)

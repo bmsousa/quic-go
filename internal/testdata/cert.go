@@ -25,6 +25,11 @@ func GetCertificatePaths() (string, string) {
 	return path.Join(certPath, "cert.pem"), path.Join(certPath, "priv.key")
 }
 
+// GetCertificatePaths returns the paths to certificate and key
+func GetCertificatePaths_msb() (string, string) {
+	return path.Join(certPath, "msb.jpbourbon-httpspeed.io.pem"), path.Join(certPath, "msb.jpbourbon-httpspeed.io-key.pem")
+}
+
 // GetTLSConfig returns a tls config for quic.clemente.io
 func GetTLSConfig() *tls.Config {
 	cert, err := tls.LoadX509KeyPair(GetCertificatePaths())

@@ -361,6 +361,7 @@ func (s *server) handlePacketImpl(p *receivedPacket) bool /* was the packet pass
 	}
 
 	s.logger.Debugf("<- Received Initial packet.")
+	s.logger.Debugf("RCV PKT TIME INI %f", time.Now().UnixNano())
 
 	sess, connID, err := s.handleInitialImpl(p, hdr)
 	if err != nil {

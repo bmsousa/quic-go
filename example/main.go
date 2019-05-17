@@ -134,13 +134,13 @@ func main() {
 		go func() {
 			var err error
 			if *tcp {
-				certFile, keyFile := testdata.GetCertificatePaths()
+				certFile, keyFile := testdata.GetCertificatePaths_msb()
 				err = http3.ListenAndServe(bCap, certFile, keyFile, nil)
 			} else {
 				server := http3.Server{
 					Server: &http.Server{Addr: bCap},
 				}
-				err = server.ListenAndServeTLS(testdata.GetCertificatePaths())
+				err = server.ListenAndServeTLS(testdata.GetCertificatePaths_msb())
 			}
 			if err != nil {
 				fmt.Println(err)

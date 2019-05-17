@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"sync"
+	"time"
 
 	"github.com/lucas-clemente/quic-go/internal/handshake"
 	"github.com/lucas-clemente/quic-go/internal/protocol"
@@ -246,14 +247,19 @@ func populateClientConfig(config *Config, createdPacketConn bool) *Config {
 
 func (c *client) dial(ctx context.Context) error {
 	c.logger.Infof("Starting new connection to %s (%s -> %s), source connection ID %s, destination connection ID %s, version %s", c.tlsConf.ServerName, c.conn.LocalAddr(), c.conn.RemoteAddr(), c.srcConnID, c.destConnID, c.version)
+  c.logger.Infof(" NEW TLS SESSION TIME INI -> %f \n", time.Now().UnixNano())
 
 	if err := c.createNewTLSSession(c.version); err != nil {
 		return err
 	}
+	c.logger.Infof("\n NEW TLS SESSION TIME END -> %f \n", time.Now().UnixNano())
+
+	c.logger.Infof("\n CREATE SECURE CONECTION TIME INI -> %f \n", time.Now().UnixNano())
 	err := c.establishSecureConnection(ctx)
 	if err == errCloseForRecreating {
 		return c.dial(ctx)
 	}
+	c.logger.Infof("\n CREATE SECURE CONECTION TIME END -> %f \n ", time.Now().UnixNano())
 	return err
 }
 
